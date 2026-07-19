@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.financiero.decisiontree.controller.MainController">
+   
+   <!-- Barra Superior -->
+   <top>
+      <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="15.0" styleClass="top-bar" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+         </padding>
+         <children>
+            <Label styleClass="app-title" text="Árbol de Decisión Financiero">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Separator orientation="VERTICAL" prefHeight="200.0" />
+            <Button fx:id="btnNuevo" mnemonicParsing="false" onAction="#handleNuevo" styleClass="btn-secondary" text="Nuevo Árbol" />
+            <Button fx:id="btnCargar" mnemonicParsing="false" onAction="#handleCargar" styleClass="btn-secondary" text="Cargar JSON" />
+            <Button fx:id="btnGuardar" mnemonicParsing="false" onAction="#handleGuardar" styleClass="btn-secondary" text="Guardar JSON" />
+            <Separator orientation="VERTICAL" prefHeight="200.0" />
+            <Label styleClass="label-bold" text="Tasa Descuento:" />
+            <TextField fx:id="txtTasaDescuento" prefWidth="80.0" text="10" />
+            <Label text=" %" />
+            <Button fx:id="btnCalcular" mnemonicParsing="false" onAction="#handleCalcular" styleClass="btn-accent" text="Calcular Financiero (DFS + Dijkstra)" />
+         </children>
+      </HBox>
+   </top>
+
+   <!-- Contenedor Principal Central (SplitPane para separar Sidebar de Canvas) -->
+   <center>
+      <SplitPane dividerPositions="0.28" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <items>
+          <!-- Panel Lateral Izquierdo: Gestión de Grafo -->
+          <AnchorPane minWidth="300.0">
+               <children>
+                  <VBox spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                     <children>
+                        
+                        <!-- Panel de Información de Selección -->
+                        <VBox styleClass="card-details" spacing="8.0">
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                           <children>
+                              <Label styleClass="card-title" text="Selección Actual" />
+                              <Label fx:id="lblSeleccionInfo" text="Ningún elemento seleccionado" wrapText="true" />
+                           </children>
+                        </VBox>
+
+                        <!-- Acordeón de Operaciones -->
+                        <VBox spacing="10.0" VBox.vgrow="ALWAYS">
+                           <children>
+                              
+                              <!-- Editor de Nodos -->
+                              <TitledPane animated="false" text="Crear / Editar Nodo">
+                                 <content>
+                                    <VBox spacing="8.0">
+                                       <children>
+                                          <GridPane hgap="8.0" vgap="8.0">
+                                            <columnConstraints>
+                                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="80.0" />
+                                              <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                            </rowConstraints>
+                                             <children>
+                                                <Label text="ID Nodo:" />
+                                                <TextField fx:id="txtNodoId" promptText="id_unico (e.g. n1)" GridPane.columnIndex="1" />
+                                                
+                                                <Label text="Nombre:" GridPane.rowIndex="1" />
+                                                <TextField fx:id="txtNodoNombre" promptText="Nombre del Nodo" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                
+                                                <Label text="Tipo:" GridPane.rowIndex="2" />
+                                                <ComboBox fx:id="cbNodoTipo" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                
+                                                <Label text="Flujo Caja:" GridPane.rowIndex="3" />
+                                                <TextField fx:id="txtNodoFlujo" promptText="0.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                             </children>
+                                          </GridPane>
+                                          <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                                             <children>
+                                                <Button fx:id="btnEliminarNodo" mnemonicParsing="false" onAction="#handleEliminarNodo" styleClass="btn-danger" text="Eliminar" />
+                                                <Button fx:id="btnGuardarNodo" mnemonicParsing="false" onAction="#handleGuardarNodo" styleClass="btn-primary" text="Guardar/Crear" />
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets top="5.0" />
+                                             </VBox.margin>
+                                          </HBox>
+                                          <Label styleClass="help-text" text="Nota: Haz click en el lienzo para colocar las coordenadas del nodo automáticamente, o arrástralo directamente para reposicionarlo." wrapText="true" />
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </TitledPane>
+                              
+                              <!-- Editor de Aristas -->
+                              <TitledPane animated="false" text="Crear / Editar Arista">
+                                 <content>
+                                    <VBox spacing="8.0">
+                                       <children>
+                                          <GridPane hgap="8.0" vgap="8.0">
+                                            <columnConstraints>
+                                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="80.0" />
+                                              <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                            </rowConstraints>
+                                             <children>
+                                                <Label text="Origen:" />
+                                                <ComboBox fx:id="cbAristaOrigen" prefWidth="150.0" GridPane.columnIndex="1" />
+                                                
+                                                <Label text="Destino:" GridPane.rowIndex="1" />
+                                                <ComboBox fx:id="cbAristaDestino" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                
+                                                <Label text="Etiqueta:" GridPane.rowIndex="2" />
+                                                <TextField fx:id="txtAristaEtiqueta" promptText="Descripción de la rama" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                
+                                                <Label text="Probabilidad:" GridPane.rowIndex="3" />
+                                                <TextField fx:id="txtAristaProbabilidad" promptText="1.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                
+                                                <Label text="Flujo Caja:" GridPane.rowIndex="4" />
+                                                <TextField fx:id="txtAristaFlujo" promptText="0.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                             </children>
+                                          </GridPane>
+                                          <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                                             <children>
+                                                <Button fx:id="btnEliminarArista" mnemonicParsing="false" onAction="#handleEliminarArista" styleClass="btn-danger" text="Eliminar" />
+                                                <Button fx:id="btnGuardarArista" mnemonicParsing="false" onAction="#handleGuardarArista" styleClass="btn-primary" text="Conectar" />
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets top="5.0" />
+                                             </VBox.margin>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </TitledPane>
+
+                              <!-- Leyenda Visual -->
+                              <VBox spacing="5.0" styleClass="legend-box" VBox.vgrow="ALWAYS">
+                                 <padding>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </padding>
+                                 <children>
+                                    <Label styleClass="legend-title" text="Leyenda del Árbol" />
+                                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                       <children>
+                                          <Pane prefHeight="16.0" prefWidth="16.0" styleClass="legend-node-decision" />
+                                          <Label text="Nodo Decisión (Elegir Máximo)" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                       <children>
+                                          <Pane prefHeight="16.0" prefWidth="16.0" styleClass="legend-node-azar" />
+                                          <Label text="Nodo Azar (Suma Probabilidades)" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                       <children>
+                                          <Pane prefHeight="16.0" prefWidth="16.0" styleClass="legend-node-terminal" />
+                                          <Label text="Nodo Terminal (Resultado)" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                       <children>
+                                          <Pane prefHeight="4.0" prefWidth="16.0" styleClass="legend-path-optimo" />
+                                          <Label text="Ruta Óptima (Dijkstra/EMV)" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+               </children>
+            </AnchorPane>
+            
+            <!-- Lienzo de Dibujo del Grafo (Canvas Interactivo) -->
+          <ScrollPane fx:id="scrollCanvas" fitToHeight="true" fitToWidth="true" pannable="true">
+            <content>
+              <AnchorPane fx:id="canvasAnchorPane" onMouseClicked="#handleCanvasClicked" prefHeight="2000.0" prefWidth="2000.0" styleClass="canvas-grid">
+                     <children>
+                        <!-- Aquí dibujaremos dinámicamente las aristas y los nodos -->
+                        <Pane fx:id="canvasPane" prefHeight="2000.0" prefWidth="2000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                     </children>
+                  </AnchorPane>
+            </content>
+          </ScrollPane>
+        </items>
+      </SplitPane>
+   </center>
+
+   <!-- Barra de Resultados y Tablero de Métricas (Bottom) -->
+   <bottom>
+      <VBox styleClass="bottom-panel" BorderPane.alignment="CENTER">
+         <children>
+            <HBox spacing="20.0" alignment="CENTER">
+               <padding>
+                  <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+               </padding>
+               <children>
+                  
+                  <!-- Tarjeta EMV -->
+                  <VBox styleClass="metric-card" prefWidth="250.0">
+                     <children>
+                        <Label styleClass="metric-title" text="VALOR MONETARIO ESPERADO (EMV)" />
+                        <Label fx:id="lblEmvTotal" styleClass="metric-value" text="0.00" />
+                        <Label styleClass="metric-subtitle" text="Evaluado desde raíz (DFS)" />
+                     </children>
+                  </VBox>
+                  
+                  <!-- Tarjeta VAN -->
+                  <VBox styleClass="metric-card" prefWidth="250.0">
+                     <children>
+                        <Label styleClass="metric-title" text="VALOR ACTUAL NETO ESPERADO (VAN)" />
+                        <Label fx:id="lblVanTotal" styleClass="metric-value" text="0.00" />
+                        <Label fx:id="lblVanDetalle" styleClass="metric-subtitle" text="Tasa de Descuento: 10.0%" />
+                     </children>
+                  </VBox>
+                  
+                  <!-- Tarjeta Ruta Óptima -->
+                  <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="metric-title" text="RUTA ÓPTIMA DE INVERSIÓN (DIJKSTRA)" />
+                        <Label fx:id="lblRutaOptima" styleClass="metric-path" text="No calculada." wrapText="true" />
+                        <Label fx:id="lblRutaOptimaCosto" styleClass="metric-subtitle" text="Mayor retorno acumulado determinista" />
+                     </children>
+                  </VBox>
+
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </bottom>
+</BorderPane>
